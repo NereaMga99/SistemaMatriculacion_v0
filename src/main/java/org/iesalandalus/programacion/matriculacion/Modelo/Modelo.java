@@ -32,7 +32,7 @@ public class Modelo {
         System.out.println("El modelo ha terminado.");
     }
 
-    public void insertarAlumno(Alumno alumno) throws OperationNotSupportedException {
+    public void insertar(Alumno alumno) throws OperationNotSupportedException {
         this.alumnos.insertar(alumno);
     }
 

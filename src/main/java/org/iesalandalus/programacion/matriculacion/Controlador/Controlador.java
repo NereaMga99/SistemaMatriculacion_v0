@@ -82,5 +82,21 @@ public class Controlador {
     public void borrar(Matricula matricula) throws OperationNotSupportedException {
         this.modelo.borrar(matricula);
     }
+
+    public Matricula[] getMatriculas() throws OperationNotSupportedException {
+        return this.modelo.getMatriculas();
+    }
+
+    public Matricula[] getMatriculas(Alumno alumno) throws OperationNotSupportedException {
+        return this.modelo.getMatriculas(alumno);
+    }
+
+    public Matricula[] getMatriculas(CicloFormativo cicloFormativo) throws OperationNotSupportedException {
+        return this.modelo.getMatriculas(cicloFormativo);
+    }
+
+    public Matricula[] getMatriculas(String cursoAcademico) throws OperationNotSupportedException {
+        return this.modelo.getMatriculas(cursoAcademico);
+    }
 }
 
