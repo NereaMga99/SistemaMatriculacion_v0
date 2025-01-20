@@ -1,8 +1,9 @@
 package org.iesalandalus.programacion.matriculacion.negocio;
 
-/*
+
 import org.iesalandalus.programacion.matriculacion.MainApp;
-import org.iesalandalus.programacion.matriculacion.dominio.*;
+import org.iesalandalus.programacion.matriculacion.Modelo.dominio.*;
+import org.iesalandalus.programacion.matriculacion.Modelo.negocio.Matriculas;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -11,10 +12,10 @@ import javax.naming.OperationNotSupportedException;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
-*/
+
 
 public class MatriculasTest {
-/*
+
     private static final String ERROR_NO_EXCEPCION = "No debería haber saltado la excepción.";
     private static final String ERROR_CAPACIDAD_NO_CORRECTA = "ERROR: La capacidad debe ser mayor que cero.";
     private static final String ERROR_INSERTAR_MATRICULA_NULA = "ERROR: No se puede insertar una matrícula nula.";
@@ -462,5 +463,5 @@ public class MatriculasTest {
     }
 
 
-*/
+
 }
