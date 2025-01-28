@@ -9,94 +9,126 @@ import org.iesalandalus.programacion.matriculacion.Modelo.dominio.Matricula;
 import org.iesalandalus.programacion.matriculacion.vista.Vista;
 
 import javax.naming.OperationNotSupportedException;
+import java.util.Objects;
 
 public class Controlador {
-    private Modelo modelo;
-    private Vista vista;
+    private static Modelo modelo;
+    private static Vista vista;
 
+    // Constructor del controlador que recibe las instancias de Modelo y Vista.
     public Controlador(Modelo modelo, Vista vista) {
+        Objects.requireNonNull(modelo, "ERROR: El modelo no puede ser nulo");
+        Objects.requireNonNull(vista, "ERROR: La vista no puede ser nula");
         this.modelo = modelo;
         this.vista = vista;
+        this.vista.setControlador(this);
     }
 
-    public void comenzar() {
-        this.modelo.comenzar();
+    // Inicia la ejecución de la aplicación, iniciando tanto el modelo como la vista.
+    public static void comenzar() throws OperationNotSupportedException {
+        modelo.comenzar();
+        vista.comenzar();
     }
 
-    public void terminar() {
-        this.modelo.terminar();
+    // Finaliza la ejecución de la aplicación, cerrando tanto el modelo como la vista.
+    public static void terminar() {
+        modelo.terminar();
+        vista.terminar();
     }
 
+    // Inserta un nuevo alumno en el modelo.
     public void insertar(Alumno alumno) throws OperationNotSupportedException {
-        this.modelo.insertar(alumno);
+        modelo.insertar(alumno);
     }
 
+    // Busca un alumno en el modelo.
     public Alumno buscar(Alumno alumno) {
-        return this.modelo.buscar(alumno);
+        return modelo.buscar(alumno);
     }
 
+    // Borra un alumno del modelo.
     public void borrar(Alumno alumno) throws OperationNotSupportedException {
-        this.modelo.borrar(alumno);
+        modelo.borrar(alumno);
     }
 
+    // Obtiene todos los alumnos registrados en el modelo.
+    public Alumno[] getAlumnos() {
+        return modelo.getAlumnos();
+    }
+
+    // Inserta una nueva asignatura en el modelo.
     public void insertar(Asignatura asignatura) throws OperationNotSupportedException {
-        this.modelo.insertar(asignatura);
+        modelo.insertar(asignatura);
     }
 
+    // Busca una asignatura en el modelo.
     public Asignatura buscar(Asignatura asignatura) {
-        return this.modelo.buscar(asignatura);
+        return modelo.buscar(asignatura);
     }
 
+    // Borra una asignatura del modelo.
     public void borrar(Asignatura asignatura) throws OperationNotSupportedException {
-        this.modelo.borrar(asignatura);
+        modelo.borrar(asignatura);
     }
 
+    // Obtiene todas las asignaturas registradas en el modelo.
     public Asignatura[] getAsignaturas() {
-        return this.modelo.getAsignaturas();
+        return modelo.getAsignaturas();
     }
 
+    // Inserta un nuevo ciclo formativo en el modelo.
     public void insertar(CicloFormativo cicloFormativo) throws OperationNotSupportedException {
-        this.modelo.insertar(cicloFormativo);
+        modelo.insertar(cicloFormativo);
     }
 
+    // Busca un ciclo formativo en el modelo.
     public CicloFormativo buscar(CicloFormativo cicloFormativo) {
-        return this.modelo.buscar(cicloFormativo);
+        return modelo.buscar(cicloFormativo);
     }
 
+    // Borra un ciclo formativo del modelo.
     public void borrar(CicloFormativo cicloFormativo) throws OperationNotSupportedException {
-        this.modelo.borrar(cicloFormativo);
+        modelo.borrar(cicloFormativo);
     }
 
-    public CicloFormativo[] getCiclosFormativos() {
-        return this.modelo.getCiclosFormativos();
+    // Obtiene todos los ciclos formativos registrados en el modelo.
+    public CicloFormativo[] getCicloFormativos() {
+        return modelo.getCiclosFormativos();
     }
 
+    // Inserta una nueva matrícula en el modelo.
     public void insertar(Matricula matricula) throws OperationNotSupportedException {
-        this.modelo.insertar(matricula);
+        modelo.insertar(matricula);
     }
 
-    public Matricula buscar(Matricula matricula) {
-        return this.modelo.buscar(matricula);
+    // Busca una matrícula en el modelo.
+    public Matricula buscar(Matricula matricula) throws OperationNotSupportedException {
+        return modelo.buscar(matricula);
     }
 
+    // Borra una matrícula del modelo.
     public void borrar(Matricula matricula) throws OperationNotSupportedException {
-        this.modelo.borrar(matricula);
+        modelo.borrar(matricula);
     }
 
+    // Obtiene todas las matrículas registradas en el modelo.
     public Matricula[] getMatriculas() throws OperationNotSupportedException {
-        return this.modelo.getMatriculas();
+        return modelo.getMatriculas();
     }
 
+    // Obtiene las matrículas de un alumno específico.
     public Matricula[] getMatriculas(Alumno alumno) throws OperationNotSupportedException {
-        return this.modelo.getMatriculas(alumno);
+        return modelo.getMatriculas(alumno);
     }
 
+    // Obtiene las matrículas de un ciclo formativo específico.
     public Matricula[] getMatriculas(CicloFormativo cicloFormativo) throws OperationNotSupportedException {
-        return this.modelo.getMatriculas(cicloFormativo);
+        return modelo.getMatriculas(cicloFormativo);
     }
 
+    // Obtiene las matrículas de un curso académico específico.
     public Matricula[] getMatriculas(String cursoAcademico) throws OperationNotSupportedException {
-        return this.modelo.getMatriculas(cursoAcademico);
+        return modelo.getMatriculas(cursoAcademico);
     }
 }
 

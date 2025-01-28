@@ -1,26 +1,33 @@
 package org.iesalandalus.programacion.matriculacion.Modelo.dominio;
 
 public enum Curso {
-    // Valores de curso.
+    // Representa el primer curso.
     PRIMERO("Primero"),
+    // Representa el segundo curso.
     SEGUNDO("Segundo");
 
-    // Atributo cadenaAMostrar.
-    private final String cadenaAMostrar;
+    // Cadena que representa el curso de forma legible.
+    private String cadenaAMostrar;
 
-    // Constructor
+    // Constructor privado para inicializar los valores del enumerado.
     private Curso(String cadenaAMostrar) {
         this.cadenaAMostrar = cadenaAMostrar;
     }
 
-    // Metodo Imprimir los datos.
+    // Devuelve una representación formateada del curso con un dígito y el nombre del curso.
     public String imprimir() {
-        return this.ordinal() + ".-" + this.cadenaAMostrar;
+        int digito = 0;
+        if (cadenaAMostrar == PRIMERO.cadenaAMostrar) {
+            digito = 0;
+        } else {
+            digito = 1;
+        }
+        return digito + ".-" + cadenaAMostrar;
     }
 
-    // Metodo toString().
+    // Devuelve una descripción del curso en formato de cadena.
     @Override
     public String toString() {
-        return String.format("%d.- %s", this.ordinal(), this.cadenaAMostrar);
+        return "Curso seleccionado:" + cadenaAMostrar;
     }
 }

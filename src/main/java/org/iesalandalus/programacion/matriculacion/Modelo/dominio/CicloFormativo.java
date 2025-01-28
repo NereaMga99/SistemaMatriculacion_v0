@@ -12,75 +12,7 @@ public class CicloFormativo {
     private String nombre;
     private int horas;
 
-    // Todos los métodos de acceso y modificación.
-
-    // Codigo.
-    public int getCodigo() {
-        return codigo;
-    }
-
-    private void setCodigo(int codigo) {
-        if (codigo < 1000 || codigo > 9999) {
-            throw new IllegalArgumentException("El código debe ser un número de cuatro dígitos.");
-        }
-        this.codigo = codigo;
-    }
-
-    // Familia profesional.
-    public String getFamiliaProfesional() {
-        return familiaProfesional;
-    }
-
-    public void setFamiliaProfesional(String familiaProfesional) {
-        if (familiaProfesional == null) {
-            throw new NullPointerException("ERROR: La familia profesional de un ciclo formativo no puede ser nula.");
-        } else if (familiaProfesional.isBlank()) {
-            throw new IllegalArgumentException("ERROR: La familia profesional no puede estar vacía.");
-        }
-
-        this.familiaProfesional = familiaProfesional;
-    }
-
-    // Grado.
-    public Grado getGrado() {
-        return grado;
-    }
-
-    public void setGrado(Grado grado) {
-        if (grado == null) {
-            throw new NullPointerException("ERROR: El grado de un ciclo formativo no puede ser nulo.");
-        }
-        this.grado = grado;
-    }
-
-    // Nombre.
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        if (nombre == null) {
-            throw new NullPointerException("ERROR: El nombre de un ciclo formativo no puede ser nulo.");
-        } else if (nombre.isBlank()) {
-            throw new IllegalArgumentException("ERROR: El nombre de un ciclo formativo no puede estar vacío.");
-        }
-
-        this.nombre = nombre;
-    }
-
-    // Horas.
-    public int getHoras() {
-        return horas;
-    }
-
-    public void setHoras(int horas) {
-        if (horas <= 0 || horas > MAXIMO_NUMERO_HORAS) {
-            throw new IllegalArgumentException("ERROR: El número de horas de un ciclo formativo no puede ser menor o igual a 0 ni mayor a " + MAXIMO_NUMERO_HORAS + ".");
-        }
-        this.horas = horas;
-    }
-
-    // Constructor con parámetros.
+    // Constructor que inicializa un nuevo Ciclo Formativo con los datos proporcionados.
     public CicloFormativo(int codigo, String familiaProfesional, Grado grado, String nombre, int horas) {
         setCodigo(codigo);
         setFamiliaProfesional(familiaProfesional);
@@ -89,36 +21,105 @@ public class CicloFormativo {
         setHoras(horas);
     }
 
-    // Constructor copia.
+    // Constructor copia que crea un nuevo Ciclo Formativo a partir de otro existente.
     public CicloFormativo(CicloFormativo cicloFormativo) {
-        if (cicloFormativo == null) {
-            throw new NullPointerException("ERROR: No es posible copiar un ciclo formativo nulo.");
-        }
-        this.codigo = cicloFormativo.codigo;
-        this.familiaProfesional = cicloFormativo.familiaProfesional;
-        this.grado = cicloFormativo.grado;
-        this.nombre = cicloFormativo.nombre;
-        this.horas = cicloFormativo.horas;
+        Objects.requireNonNull(cicloFormativo, "ERROR: No es posible copiar un ciclo formativo nulo.");
+        setCodigo(cicloFormativo.codigo);
+        setFamiliaProfesional(cicloFormativo.familiaProfesional);
+        setGrado(cicloFormativo.grado);
+        setNombre(cicloFormativo.nombre);
+        setHoras(cicloFormativo.horas);
     }
 
+    // Devuelve el código del ciclo formativo.
+    public int getCodigo() {
+        return codigo;
+    }
+
+    // Establece el código del ciclo formativo.
+    private void setCodigo(int codigo) {
+        if (codigo < 1000 || codigo > 9999) {
+            throw new IllegalArgumentException("ERROR: El código de un ciclo formativo debe ser un número de 4 dígitos.");
+        }
+        this.codigo = codigo;
+    }
+
+    // Devuelve la familia profesional del ciclo formativo.
+    public String getFamiliaProfesional() {
+        return familiaProfesional;
+    }
+
+    // Establece la familia profesional del ciclo formativo.
+    public void setFamiliaProfesional(String familiaProfesional) {
+        Objects.requireNonNull(familiaProfesional, "ERROR: La familia profesional de un ciclo formativo no puede ser nula.");
+        if (familiaProfesional.isBlank()) {
+            throw new IllegalArgumentException("ERROR: La familia profesional no puede estar vacía.");
+        }
+        this.familiaProfesional = familiaProfesional;
+    }
+
+    // Devuelve el grado del ciclo formativo.
+    public Grado getGrado() {
+        return grado;
+    }
+
+    // Establece el grado del ciclo formativo.
+    public void setGrado(Grado grado) {
+        Objects.requireNonNull(grado, "ERROR: El grado de un ciclo formativo no puede ser nulo.");
+        this.grado = grado;
+    }
+
+    // Devuelve el nombre del ciclo formativo.
+    public String getNombre() {
+        return nombre;
+    }
+
+    // Establece el nombre del ciclo formativo.
+    public void setNombre(String nombre) {
+        Objects.requireNonNull(nombre, "ERROR: El nombre de un ciclo formativo no puede ser nulo.");
+        if (nombre.isBlank()) {
+            throw new IllegalArgumentException("ERROR: El nombre de un ciclo formativo no puede estar vacío.");
+        }
+        this.nombre = nombre;
+    }
+
+    // Devuelve el número de horas del ciclo formativo.
+    public int getHoras() {
+        return horas;
+    }
+
+    // Establece el número de horas del ciclo formativo.
+    public void setHoras(int horas) {
+        if (horas <= 0 || horas > MAXIMO_NUMERO_HORAS) {
+            throw new IllegalArgumentException(
+                    "ERROR: El número de horas de un ciclo formativo no puede ser menor o igual a 0 ni mayor a 2000.");
+        }
+        this.horas = horas;
+    }
+
+    // Verifica si dos ciclos formativos son iguales basándose en su código.
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CicloFormativo that)) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        CicloFormativo that = (CicloFormativo) o;
         return codigo == that.codigo;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(codigo, familiaProfesional, grado, nombre, horas);
+        return Objects.hashCode(codigo);
     }
 
+    // Devuelve una representación en forma de cadena del ciclo formativo.
     @Override
     public String toString() {
         return "Código ciclo formativo=" + codigo + ", familia profesional=" + familiaProfesional + ", grado=" + grado + ", nombre ciclo formativo=" + nombre + ", horas=" + horas;
     }
 
-    // Metodo para imprimir los datos.
+    // Devuelve una representación breve del ciclo formativo.
     public String imprimir() {
         return "Código ciclo formativo=" + codigo + ", nombre ciclo formativo=" + nombre;
     }

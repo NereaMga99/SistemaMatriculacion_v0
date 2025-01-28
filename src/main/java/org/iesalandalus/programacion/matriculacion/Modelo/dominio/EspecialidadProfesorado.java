@@ -4,24 +4,32 @@ public enum EspecialidadProfesorado {
     // Valores de Especialidad Profesorado.
     INFORMATICA("Informática"),
     SISTEMAS("Sistemas"),
-    FOL("FOL");
+    FOL("Fol");
 
-    // Atributo cadenaAMostrar.
-    private final String cadenaAMostrar;
+    // Cadena que representa la especialidad de forma legible.
+    private String cadenaAMostrar;
 
-    // Constructor.
+    // Constructor privado para inicializar los valores del enumerado.
     private EspecialidadProfesorado(String cadenaAMostrar) {
         this.cadenaAMostrar = cadenaAMostrar;
     }
 
-    // Metodo Imprimir los datos.
+    // Devuelve una representación formateada de la especialidad con un dígito y el nombre de la especialidad.
     public String imprimir() {
-        return this.ordinal() + ".-" + this.cadenaAMostrar;
+        int digito = 0;
+        if (cadenaAMostrar == INFORMATICA.cadenaAMostrar) {
+            digito = 0;
+        } else if (cadenaAMostrar == SISTEMAS.cadenaAMostrar) {
+            digito = 1;
+        } else {
+            digito = 2;
+        }
+        return digito + ".-" + cadenaAMostrar;
     }
 
-    // Metodo toString().
+    // Devuelve una descripción de la especialidad en formato de cadena.
     @Override
     public String toString() {
-        return String.format("%d.- %s", this.ordinal(), this.cadenaAMostrar);
+        return "La especialidad seleccionada:" + cadenaAMostrar;
     }
 }

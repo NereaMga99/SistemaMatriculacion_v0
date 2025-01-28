@@ -3,14 +3,16 @@ package org.iesalandalus.programacion.matriculacion.Modelo.dominio;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Alumno {
 
     private static final String ER_TELEFONO = "^\\d{9}";
-    private static final String ER_CORREO = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
-    private static final String ER_DNI = "[0-9]{8}[A-Z]";
+    private static final String ER_CORREO = "^\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
+    private static final String ER_DNI = "^(\\d{8})([A-Za-z]{1})$";
     public static final String FORMATO_FECHA = "dd/MM/yyyy";
-    private static final String ER_NIA = "[a-zéáíóú]{4}[0-9]{3}";
+    private static final String ER_NIA = "^([A-Za-zÁáÉéÍíÓóÚú]{4})(\\d{3})$";
     private static final int MIN_EDAD_ALUMNADO = 16;
 
     // Atributos.
@@ -22,7 +24,7 @@ public class Alumno {
     private String nia;
 
 
-    // Constructor con parámetros.
+    // Constructor con parámetros para inicializar un alumno.
     public Alumno(String nombre, String dni, String correo, String telefono, LocalDate fechaNacimiento) {
         setNombre(nombre);
         setDni(dni);
@@ -32,175 +34,179 @@ public class Alumno {
         setNia();
     }
 
-    // Constructor copia.
+    // Constructor copia para inicializar un alumno a partir de otro existente.
     public Alumno(Alumno alumno) {
-        if (alumno == null) {
-            throw new NullPointerException("ERROR: No es posible copiar un alumno nulo.");
-        }
-        this.nombre = alumno.nombre;
-        this.dni = alumno.dni;
-        this.correo = alumno.correo;
-        this.telefono = alumno.telefono;
-        this.fechaNacimiento = alumno.fechaNacimiento;
-        this.nia = alumno.nia;
+        Objects.requireNonNull(alumno, "ERROR: No es posible copiar un alumno nulo.");
+        setNombre(alumno.getNombre());
+        setDni(alumno.getDni());
+        setCorreo(alumno.getCorreo());
+        setTelefono(alumno.getTelefono());
+        setFechaNacimiento(alumno.getFechaNacimiento());
     }
 
-    // Todos los métodos de acceso y modificación.
+    //Formatea el nombre eliminando espacios en blanco y capitalizando cada palabra.
+    private String formateaNombre(String nombre) {
+        String[] tokens = nombre.trim().toLowerCase().split("[ ]+");
+        String nombreCompleto = "";
+        for (String token : tokens) {
+            nombreCompleto += token.substring(0, 1).toUpperCase() + token.substring(1) + " ";
+        }
+        return nombreCompleto.trim();
+    }
 
-    // Nombre.
+    //Comprueba si la letra del DNI es correcta.
+    private boolean comprobarLetraDni(String dni) {
+        int numero;
+        char letra;
+        Pattern patron = Pattern.compile(ER_DNI);
+        Matcher comparador = patron.matcher(dni);
+        char[] LETRAS_DNI = { 'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V',
+                'H', 'L', 'C', 'K', 'E' };
+        if (comparador.matches()) {
+            numero = Integer.parseInt(comparador.group(1));
+            letra = comparador.group(2).charAt(0);
+        } else {
+            return false;
+        }
+        int n = numero % 23;
+        if (letra != LETRAS_DNI[n]) {
+            throw new IllegalArgumentException("ERROR: La letra del dni del alumno no es correcta.");
+        }
+        return true;
+    }
+
+    //Obtiene las iniciales del nombre del alumno.
+    private String getIniciales() {
+        String[] tokens = nombre.trim().toUpperCase().split("[ ]+");
+        String s = "";
+        for (String token : tokens) {
+            s += token.substring(0, 1);
+        }
+        return s;
+    }
+
+    // Obtiene el NIA del alumno.
+    public String getNia() {
+        return this.nia;
+    }
+
+    // Establece el NIA del alumno basándose en el nombre y el DNI.
+    private void setNia() {
+        setNia(this.nombre.substring(0, 4).toLowerCase() + dni.substring(5, 8));
+    }
+
+    // Valida y establece el NIA del alumno.
+    private void setNia(String nia) {
+        Objects.requireNonNull(nia, "ERROR: El nia no puede ser nulo");
+        if (!nia.matches(ER_NIA)) {
+            throw new IllegalArgumentException("Nia incorrecto.");
+        }
+        this.nia = nia;
+    }
+
+    // Getters y setters
+
+    //Obtiene el nombre del alumno.
     public String getNombre() {
         return nombre;
     }
 
+    //Establece el nombre del alumno.
     public void setNombre(String nombre) {
-        if (nombre == null) {
-            throw new NullPointerException("ERROR: El nombre de un alumno no puede ser nulo.");
-        }
-        String nombreFormateado = nombre.trim().replaceAll("\\s+", " ");
-        if (nombreFormateado.isEmpty()) {
+        Objects.requireNonNull(nombre, "ERROR: El nombre de un alumno no puede ser nulo.");
+        if (nombre.isBlank()) {
             throw new IllegalArgumentException("ERROR: El nombre de un alumno no puede estar vacío.");
         }
-        this.nombre = formatearNombre(nombreFormateado);
+        this.nombre = formateaNombre(nombre);
     }
 
-    public String getIniciales() {
-        String[] tokens = this.nombre.split(" " );
-        String iniciales = "";
-        for (int i = 0; i < tokens.length; i++) {
-            iniciales = iniciales + tokens [i].substring(0, 1);
-        }
-        return iniciales;
-    }
-
-    private String formatearNombre(String nombre) {
-        StringBuilder formateado = new StringBuilder();
-        for (String palabra : nombre.split(" ")) {
-            formateado.append(palabra.isEmpty() ? "" : palabra.substring(0, 1).toUpperCase() + palabra.substring(1).toLowerCase()).append(" ");
-        }
-        return formateado.toString().trim();
-    }
-
-    // DNI.
+    // Obtiene el DNI del alumno.
     public String getDni() {
         return dni;
     }
 
+    // Establece el DNI del alumno.
     private void setDni(String dni) {
-        if (dni == null) {
-            throw new NullPointerException("ERROR: El dni de un alumno no puede ser nulo.");
-        }
-        // Metodo para comprobar el formato del DNI.
-
-        if (!dni.matches(ER_DNI)) {
-            throw new IllegalArgumentException("ERROR: El dni del alumno no tiene un formato válido.");
-        }
+        Objects.requireNonNull(dni, "ERROR: El dni de un alumno no puede ser nulo.");
         if (!comprobarLetraDni(dni)) {
-            throw new IllegalArgumentException("ERROR: La letra del dni del alumno no es correcta.");
+            throw new IllegalArgumentException("ERROR: El dni del alumno no tiene un formato válido.");
         }
         this.dni = dni;
     }
 
-    private boolean comprobarLetraDni(String dni) {
-        String letras = "TRWAGMYFPDXBNJZSQVHLCKE";  // Usamos un String en lugar de un array
-        int numero = Integer.parseInt(dni.substring(0, 8));
-        String letra =String.valueOf(letras.charAt(numero % 23));
-        return letra.equals(dni.substring(8));
-    }
-
-    // Correo.
+    // Obtiene el correo electrónico del alumno.
     public String getCorreo() {
         return correo;
     }
 
+    // Establece el correo electrónico del alumno.
     public void setCorreo(String correo) {
-        if (correo == null) {
-            throw new NullPointerException("ERROR: El correo de un alumno no puede ser nulo.");
-        }
+        Objects.requireNonNull(correo, "ERROR: El correo de un alumno no puede ser nulo.");
         if (!correo.matches(ER_CORREO)) {
             throw new IllegalArgumentException("ERROR: El correo del alumno no tiene un formato válido.");
-        }
-        if (correo.isBlank() || correo.isEmpty()) {
-            throw new NullPointerException("ERROR: El correo de un alumno no puede ser nulo.");
         }
         this.correo = correo;
     }
 
-    // Telefono.
+    // Obtiene el teléfono del alumno.
     public String getTelefono() {
         return telefono;
     }
 
+    //Establece el teléfono del alumno.
     public void setTelefono(String telefono) {
-        if (telefono == null) {
-            throw new NullPointerException("ERROR: El teléfono de un alumno no puede ser nulo.");
-        }
+        Objects.requireNonNull(telefono, "ERROR: El teléfono de un alumno no puede ser nulo.");
         if (!telefono.matches(ER_TELEFONO)) {
             throw new IllegalArgumentException("ERROR: El teléfono del alumno no tiene un formato válido.");
         }
         this.telefono = telefono;
     }
 
-    // Fecha de nacimiento.
+    // Obtiene la fecha de nacimiento del alumno.
     public LocalDate getFechaNacimiento() {
-        return fechaNacimiento;
+        return this.fechaNacimiento;
     }
 
+    // Establece la fecha de nacimiento del alumno.
     private void setFechaNacimiento(LocalDate fechaNacimiento) {
-        if (fechaNacimiento == null) {
-            throw new NullPointerException("ERROR: La fecha de nacimiento de un alumno no puede ser nula.");
-        }
-        LocalDate fechaLimite = LocalDate.now().minusYears(MIN_EDAD_ALUMNADO);
-        if (fechaNacimiento.compareTo(fechaLimite) > 0) {
+        Objects.requireNonNull(fechaNacimiento, "ERROR: La fecha de nacimiento de un alumno no puede ser nula.");
+        if ((LocalDate.now().getYear() - fechaNacimiento.getYear()) < MIN_EDAD_ALUMNADO) {
             throw new IllegalArgumentException("ERROR: La edad del alumno debe ser mayor o igual a 16 años.");
         }
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    // NIA.
-    public String getNia() {
-        return nia;
-    }
-
-    private void setNia() {
-        String nombreBase = nombre.toLowerCase().substring(0, 4);
-        String dniBase = dni.substring(5, 8);
-        this.setNia(nombreBase + dniBase);
-    }
-
-    private void setNia(String nia) {
-    this.nia = nia;
-    }
-
+    // Se comparan dos objetos para verificar si son iguales.
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        Alumno a= (Alumno) o;
-        return this.dni.toString()==a.getDni().toString();
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Alumno alumno = (Alumno) o;
+        return Objects.equals(this.dni, alumno.dni) && Objects.equals(dni, alumno.dni);
     }
 
+    // Devuelve el código hash del objeto.
     @Override
     public int hashCode() {
-        return Objects.hash(ER_TELEFONO, ER_CORREO, ER_DNI, FORMATO_FECHA, ER_NIA, MIN_EDAD_ALUMNADO, nombre, telefono, correo, dni, fechaNacimiento, nia);
+        return Objects.hash(dni);
     }
 
-    // Metodo imprimir los datos.
+    // Imprime una representación simplificada del alumno.
     public String imprimir() {
-        return "Alumno=" +
-                "nombre=" + getNombre() + " " + "(" + getIniciales() + ")" +
-                ", DNI=" + getDni() +
-                ", correo=" + getCorreo() +
-                ", teléfono=" + getTelefono() +
-                ", fechaNacimiento=" + fechaNacimiento.format(DateTimeFormatter.ofPattern(FORMATO_FECHA)) +
-                ", NIA=" + nia;
+        return String.format("nombre=%s (%s), DNI=%s, correo=%s, teléfono=%s, fecha nacimiento=%s", this.getNombre(),
+                this.getIniciales(), this.getDni(), this.getCorreo(), this.getTelefono(),
+                this.getFechaNacimiento().format(DateTimeFormatter.ofPattern(FORMATO_FECHA)));
     }
 
-    // Metodo toString.
+    // Devuelve una representación en forma de cadena de texto del alumno.
     @Override
     public String toString() {
-        return "Número de Identificación del Alumnado " +
-                "(NIA)=" + getNia() + " nombre=" + getNombre() + " (" + getIniciales() + ")" +
-                ", DNI=" + getDni() + ", correo=" + getCorreo() + ", teléfono=" + getTelefono() +
-                ", fecha nacimiento=" + fechaNacimiento.format(DateTimeFormatter.ofPattern(FORMATO_FECHA));
+        return String.format(
+                "Número de Identificación del Alumnado (NIA)=%s nombre=%s (%s), DNI=%s, correo=%s, teléfono=%s, fecha nacimiento=%s",
+                this.getNia(), this.getNombre(), this.getIniciales(), this.getDni(), this.getCorreo(),
+                this.getTelefono(), this.getFechaNacimiento().format(DateTimeFormatter.ofPattern(FORMATO_FECHA)));
     }
 }
 

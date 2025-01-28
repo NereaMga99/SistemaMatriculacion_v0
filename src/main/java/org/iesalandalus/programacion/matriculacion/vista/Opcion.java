@@ -22,21 +22,22 @@ public enum Opcion {
     MOSTRAR_MATRICULAS_CICLO_FORMATIVO("Mostrar matrículas de un Ciclo Formativo"),
     MOSTRAR_MATRICULAS_CURSO_ACADEMICO("Mostrar matrículas de este Curso Académico");
 
-    // Atributo.
-    private String mensaje;
+    // Atributo que contiene la cadena a mostrar asociada a cada opción.
+    private String cadenaAMostrar;
 
-    // Constructor.
-    private Opcion(String mensaje) {
-        this.mensaje = mensaje;
+    // Constructor de la enumeración Opcion que asocia una cadena a mostrar a cada opción.
+    private Opcion(String cadenaAMostrar) {
+        this.cadenaAMostrar = cadenaAMostrar;
     }
 
     // Metodo para obtener el mensaje.
     public String getMensaje() {
-        return mensaje;
+        return cadenaAMostrar;
     }
 
+    // Devuelve la representación en cadena de la opción, que incluye su índice en la enumeración
     @Override
     public String toString() {
-        return this.ordinal() + ".- " + mensaje;
+        return ordinal() + ".-" + cadenaAMostrar;
     }
 }

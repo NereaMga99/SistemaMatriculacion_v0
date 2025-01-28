@@ -1,6 +1,8 @@
 package org.iesalandalus.programacion.matriculacion;
 
 
+import org.iesalandalus.programacion.matriculacion.Controlador.Controlador;
+import org.iesalandalus.programacion.matriculacion.Modelo.Modelo;
 import org.iesalandalus.programacion.matriculacion.Modelo.dominio.Alumno;
 import org.iesalandalus.programacion.matriculacion.Modelo.dominio.Asignatura;
 import org.iesalandalus.programacion.matriculacion.Modelo.dominio.CicloFormativo;
@@ -11,11 +13,15 @@ import org.iesalandalus.programacion.matriculacion.Modelo.negocio.CiclosFormativ
 import org.iesalandalus.programacion.matriculacion.Modelo.negocio.Matriculas;
 import org.iesalandalus.programacion.matriculacion.vista.Consola;
 import org.iesalandalus.programacion.matriculacion.vista.Opcion;
+import org.iesalandalus.programacion.matriculacion.vista.Vista;
 
 import javax.naming.OperationNotSupportedException;
 
+import static org.iesalandalus.programacion.matriculacion.vista.Opcion.INSERTAR_ALUMNO;
+import static org.iesalandalus.programacion.matriculacion.vista.Opcion.SALIR;
+
 public class MainApp {
-    public static final int CAPACIDAD=3;
+    public static final int CAPACIDAD= 10;
 
     // Atributos.
     private static final Alumnos alumnos = new Alumnos(CAPACIDAD);
@@ -25,13 +31,16 @@ public class MainApp {
 
 
     public static void main(String[] args) throws OperationNotSupportedException {
-        Opcion opcion;
-        do {
-            opcion = Consola.elegirOpcion();
-            ejecutarOpcion(opcion);
-        } while (opcion != Opcion.SALIR);
-    }
+        Modelo modelo = new Modelo();
 
+        Vista vista = new Vista();
+
+        Controlador controlador = new Controlador(modelo, vista);
+
+        Controlador.comenzar();
+
+        Controlador.terminar();
+    }
     private static void ejecutarOpcion(Opcion opcion) throws OperationNotSupportedException {
         switch (opcion) {
             case SALIR:

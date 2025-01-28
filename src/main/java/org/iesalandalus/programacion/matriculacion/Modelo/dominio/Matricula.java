@@ -22,38 +22,31 @@ public class Matricula {
     private Alumno alumno;
     private Asignatura[] coleccionAsignaturas;
 
-    // Constructor con parámetros.
+    // Constructor principal para inicializar una matrícula con todos los datos.
     public Matricula (int idMatricula , String cursoAcademico , LocalDate fechaMatriculacion , Alumno alumno , Asignatura[] coleccionAsignaturas) throws OperationNotSupportedException {
         setIdMatricula(idMatricula);
         setCursoAcademico(cursoAcademico);
         setFechaMatriculacion(fechaMatriculacion);
         setAlumno(alumno);
-        if (coleccionAsignaturas == null) {
-            throw new NullPointerException("ERROR: La lista de asignaturas de una matrícula no puede ser nula.");
-        }
         setColeccionAsignaturas(coleccionAsignaturas);
     }
 
-    // Constructor copia.
-    public Matricula(Matricula matricula) {
-        if (matricula == null) {
-            throw new NullPointerException("ERROR: No es posible copiar una matrícula nula.");
-        }
-        this.idMatricula = matricula.idMatricula;
-        this.cursoAcademico = matricula.cursoAcademico;
-        this.fechaMatriculacion = matricula.fechaMatriculacion;
-        this.fechaAnulacion = matricula.fechaAnulacion;
-        this.alumno = matricula.alumno;
-        this.coleccionAsignaturas = Arrays.copyOf(matricula.coleccionAsignaturas, matricula.coleccionAsignaturas.length);
+    // Constructor de copia para crear una nueva matrícula basada en otra existente.
+    public Matricula(Matricula matricula) throws OperationNotSupportedException {
+        Objects.requireNonNull(matricula, "ERROR: No es posible copiar una matrícula nula.");
+        setIdMatricula(matricula.getIdMatricula());
+        setCursoAcademico(matricula.getCursoAcademico());
+        setFechaMatriculacion(matricula.getFechaMatriculacion());
+        setAlumno(matricula.getAlumno());
+        setColeccionAsignaturas(matricula.getColeccionAsignaturas());
     }
 
-    // Todos los métodos de acceso y modificación.
-
-    // Matricula.
+    // Devuelve el identificador único de la matrícula.
     public int getIdMatricula() {
         return idMatricula;
     }
 
+    // Establece el identificador único de la matrícula.
     public void setIdMatricula(int idMatricula) {
         if (idMatricula <= 0) {
             throw new IllegalArgumentException("ERROR: El identificador de una matrícula no puede ser menor o igual a 0.");
@@ -61,16 +54,15 @@ public class Matricula {
         this.idMatricula = idMatricula;
     }
 
-    // Curso académico.
+    // Devuelve el curso académico asociado a la matrícula.
     public String getCursoAcademico() {
-        return cursoAcademico;
+        return this.cursoAcademico;
     }
 
+    // Establece el curso académico asociado a la matrícula.
     public void setCursoAcademico(String cursoAcademico) {
-        if (cursoAcademico == null) {
-            throw new NullPointerException("ERROR: El curso académico de una matrícula no puede ser nulo.");
-        }
-        if (cursoAcademico.isEmpty() || cursoAcademico.isBlank()) {
+        Objects.requireNonNull(cursoAcademico, "ERROR: El curso académico de una matrícula no puede ser nulo.");
+        if (cursoAcademico.isBlank()) {
             throw new IllegalArgumentException("ERROR: El curso académico de una matrícula no puede estar vacío.");
         }
         if (!cursoAcademico.matches(ER_CURSO_ACADEMICO)) {
@@ -79,106 +71,102 @@ public class Matricula {
         this.cursoAcademico = cursoAcademico;
     }
 
-    // Fecha matriculación.
+    // Devuelve la fecha de matriculación.
     public LocalDate getFechaMatriculacion() {
-        return fechaMatriculacion;
+        return this.fechaMatriculacion;
     }
 
+    // Establece la fecha de matriculación.
     public void setFechaMatriculacion(LocalDate fechaMatriculacion) {
-        if (fechaMatriculacion == null) {
-            throw new NullPointerException("ERROR: La fecha de matriculación de una mátricula no puede ser nula.");
-        }
+        Objects.requireNonNull(fechaMatriculacion, "ERROR: La fecha de matriculación de una mátricula no puede ser nula.");
         if (fechaMatriculacion.isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("ERROR: La fecha de matriculación no puede ser posterior a hoy.");
         }
-        if (LocalDate.now().minusDays(MAXIMO_DIAS_ANTERIOR_MATRICULA).isAfter(fechaMatriculacion)) {
-            throw new IllegalArgumentException("ERROR: La fecha de matriculación no puede ser anterior a " + MAXIMO_DIAS_ANTERIOR_MATRICULA + " días.");
+        if (fechaMatriculacion.isBefore(LocalDate.now().minusDays(MAXIMO_DIAS_ANTERIOR_MATRICULA))) {
+            throw new IllegalArgumentException("ERROR: La fecha de matriculación no puede ser anterior a "
+                    + MAXIMO_DIAS_ANTERIOR_MATRICULA + " días.");
         }
         this.fechaMatriculacion = fechaMatriculacion;
     }
 
-    // Fecha anulación.
+    // Devuelve la fecha de anulación.
     public LocalDate getFechaAnulacion() {
-        return fechaAnulacion;
+        return this.fechaAnulacion;
     }
 
+    // Establece la fecha de anulacion.
     public void setFechaAnulacion(LocalDate fechaAnulacion) {
-        if (fechaAnulacion == null) {
-            throw new IllegalArgumentException("ERROR: La fecha de anulación no puede ser nula.");
-        }
-
+        Objects.requireNonNull(fechaAnulacion, "ERROR: La fecha de anulación de una matrícula no puede ser nula.");
         if (fechaAnulacion.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("ERROR: La fecha de anulación de una matrícula no puede ser posterior a hoy.");
+            throw new IllegalArgumentException(
+                    "ERROR: La fecha de anulación de una matrícula no puede ser posterior a hoy.");
         }
-        if (fechaAnulacion.isBefore(fechaMatriculacion)) {
-            throw new IllegalArgumentException("ERROR: La fecha de anulación no puede ser anterior a la fecha de matriculación.");
-        }
-        if (fechaMatriculacion.plusMonths(MAXIMO_MESES_ANTERIOR_ANULACION).isBefore(fechaAnulacion)) {
-            throw new IllegalArgumentException("ERROR: La fecha de anulación no puede superar los " + MAXIMO_MESES_ANTERIOR_ANULACION + " meses.");
+        if (fechaAnulacion.isBefore(getFechaMatriculacion())) {
+            throw new IllegalArgumentException(
+                    "ERROR: La fecha de anulación no puede ser anterior a la fecha de matriculación.");
         }
 
         this.fechaAnulacion = fechaAnulacion;
     }
 
-
-    // Alumno.
+    // Devuelve el alumno asociado a la matrícula.
     public Alumno getAlumno() {
-        return alumno;
+        return this.alumno;
     }
 
+    // Establece el alumno asociado a la matrícula.
     public void setAlumno(Alumno alumno) {
-        if (alumno == null) {
-            throw new NullPointerException("ERROR: El alumno de una matrícula no puede ser nulo.");
-        }
+        Objects.requireNonNull(alumno, "ERROR: El alumno de una matrícula no puede ser nulo.");
         this.alumno = alumno;
     }
 
-    // Colección de asignaturas.
+    // Devuelve la lista de asignaturas matriculadas.
     public Asignatura[] getColeccionAsignaturas() {
-        return Arrays.copyOf(coleccionAsignaturas, coleccionAsignaturas.length);
+        return this.coleccionAsignaturas;
     }
 
-    public void setColeccionAsignaturas(Asignatura[] asignaturas) throws OperationNotSupportedException {
-        if (asignaturas == null) {
-            throw new NullPointerException("ERROR: La lista de asignaturas de una matrícula no puede ser nula.");
+    // Establece la lista de asignaturas matriculadas.
+    public void setColeccionAsignaturas(Asignatura[] coleccionAsignaturas) throws OperationNotSupportedException {
+        Objects.requireNonNull(coleccionAsignaturas, "ERROR: La lista de asignaturas de una matrícula no puede ser nula.");
+        if (superaMaximoNumeroHorasMatricula(coleccionAsignaturas)) {
+            throw new OperationNotSupportedException("ERROR: No se puede realizar la matrícula ya que supera el máximo de horas permitidas ("
+                    + Matricula.MAXIMO_NUMERO_HORAS_MATRICULA + " horas).");
         }
-        if (asignaturas.length == 0) {
-            throw new IllegalArgumentException("ERROR: La lista de asignaturas no puede estar vacía.");
-        }
-        if (asignaturas.length > MAXIMO_NUMERO_ASIGNATURAS_POR_MATRICULA) {
-            throw new IllegalArgumentException("ERROR: El número máximo de asignaturas por matrícula es " + MAXIMO_NUMERO_ASIGNATURAS_POR_MATRICULA + ".");
-        }
+        this.coleccionAsignaturas = coleccionAsignaturas;
+    }
 
-        int totalHoras = 0;
-        for (Asignatura asignatura : asignaturas) {
-            if (asignatura != null) {
-                totalHoras += asignatura.getHorasAnuales();
+    // Calcula si la suma de horas de las asignaturas supera el máximo permitido.
+    private boolean superaMaximoNumeroHorasMatricula(Asignatura[] asignaturasMatricula) {
+        int horasMatricula = 0;
+        for (Asignatura a : asignaturasMatricula) {
+            if (a != null) {
+                horasMatricula += a.getHorasAnuales();
             }
         }
-
-        if (totalHoras > MAXIMO_NUMERO_HORAS_MATRICULA) {
-            throw new OperationNotSupportedException("ERROR: No se puede realizar la matrícula ya que supera el máximo de horas permitidas (" + MAXIMO_NUMERO_HORAS_MATRICULA + " horas).");
-        }
-
-        this.coleccionAsignaturas = Arrays.copyOf(asignaturas, asignaturas.length);
+        return horasMatricula > MAXIMO_NUMERO_HORAS_MATRICULA;
     }
 
-    private String asignaturasMatricula(){
-        StringBuilder resultado= new StringBuilder();
-        for(Asignatura asignatura : coleccionAsignaturas)
-        {
-            if (asignatura!=null)
-                resultado.append(asignatura.imprimir());
+    // Devuelve una representación textual de las asignaturas matriculadas.
+    private String asignaturasMatricula() {
+        String s = "";
+        for (int i = 0; i < coleccionAsignaturas.length; i++) {
+            if (coleccionAsignaturas[i] != null) {
+                s += coleccionAsignaturas[i].getNombre();
+                if (i < coleccionAsignaturas.length - 1) {
+                    s += ", ";
+                }
+            }
         }
-        return resultado.toString();
+        return s;
     }
 
+    // Compara si dos matrículas son iguales basándose en su identificador.
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Matricula matricula = (Matricula) obj;
-        return idMatricula == matricula.idMatricula;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Matricula matricula = (Matricula) o;
+        return this.idMatricula == matricula.idMatricula;
     }
 
     @Override
@@ -186,29 +174,24 @@ public class Matricula {
         return Objects.hash(idMatricula, cursoAcademico, fechaMatriculacion, fechaAnulacion, alumno, Arrays.hashCode(coleccionAsignaturas));
     }
 
-    // Metodo para imprimir los datos.
-    public String imprimir(){
-        return String.format("idMatricula=%d, curso académico=%s, fecha matriculación=%s, alumno={%s}",
-                this.getIdMatricula(), this.getCursoAcademico(),
-                this.getFechaMatriculacion().format(DateTimeFormatter.ofPattern(Matricula.FORMATO_FECHA)),
-                this.getAlumno().imprimir());
+    // Muestra la información de la matrícula.
+    public String imprimir() {
+        return "idMatricula=" + getIdMatricula() + ", " + "curso académico=" + getCursoAcademico() + ", " + "fecha matriculación="
+                + getFechaMatriculacion().format(DateTimeFormatter.ofPattern(FORMATO_FECHA)) + ", " + "alumno=" + "{" + getAlumno().imprimir() + "}";
     }
 
+    // Devuelve una representación textual de la matrícula
     @Override
     public String toString() {
         if (fechaAnulacion == null) {
-            return "idMatricula=" + idMatricula +
-                    ", curso académico=" + cursoAcademico +
-                    ", fecha matriculación=" + fechaMatriculacion.format(DateTimeFormatter.ofPattern(FORMATO_FECHA)) +
-                    ", alumno=" + alumno.imprimir() +
-                    ", Asignaturas={ " + asignaturasMatricula() + "}";
+            return "idMatricula=" + getIdMatricula() + ", " + "curso académico=" + getCursoAcademico() + ", " + "fecha matriculación="
+                    + getFechaMatriculacion().format(DateTimeFormatter.ofPattern(FORMATO_FECHA)) + ", " + "alumno=" + getAlumno().imprimir() + ", "
+                    + "Asignaturas=" + "{ " + asignaturasMatricula() + "}";
         } else {
-            return "idMatricula=" + idMatricula +
-                    ", curso académico=" + cursoAcademico +
-                    ", fecha matriculación=" + fechaMatriculacion.format(DateTimeFormatter.ofPattern(FORMATO_FECHA)) +
-                    ", fecha anulación=" + fechaAnulacion.format(DateTimeFormatter.ofPattern(FORMATO_FECHA)) +
-                    ", alumno=" + alumno.imprimir() +
-                    ", Asignaturas={ " + asignaturasMatricula() + "}";
+            return "idMatricula=" + getIdMatricula() + ", " + "curso académico=" + getCursoAcademico() + ", " + "fecha matriculación="
+                    + getFechaMatriculacion().format(DateTimeFormatter.ofPattern(FORMATO_FECHA)) + ", " + "fecha anulación="
+                    + getFechaAnulacion().format(DateTimeFormatter.ofPattern(FORMATO_FECHA)) + ", " + "alumno=" + getAlumno().imprimir() + ", "
+                    + "Asignaturas=" + "{ " + asignaturasMatricula() + "}";
         }
     }
 }
