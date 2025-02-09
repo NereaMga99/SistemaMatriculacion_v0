@@ -3,6 +3,7 @@ package org.iesalandalus.programacion.matriculacion.Modelo.dominio;
 import javax.naming.OperationNotSupportedException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -20,16 +21,18 @@ public class Matricula {
     private LocalDate fechaMatriculacion;
     private LocalDate fechaAnulacion;
     private Alumno alumno;
-    private Asignatura[] coleccionAsignaturas;
+    private ArrayList<Asignatura> coleccionAsignaturas;
 
     // Constructor principal para inicializar una matrícula con todos los datos.
-    public Matricula (int idMatricula , String cursoAcademico , LocalDate fechaMatriculacion , Alumno alumno , Asignatura[] coleccionAsignaturas) throws OperationNotSupportedException {
+    public Matricula(int idMatricula, String cursoAcademico, LocalDate fechaMatriculacion, Alumno alumno,
+                     ArrayList<Asignatura> coleccionAsignaturas) throws OperationNotSupportedException {
         setIdMatricula(idMatricula);
         setCursoAcademico(cursoAcademico);
         setFechaMatriculacion(fechaMatriculacion);
         setAlumno(alumno);
         setColeccionAsignaturas(coleccionAsignaturas);
     }
+
 
     // Constructor de copia para crear una nueva matrícula basada en otra existente.
     public Matricula(Matricula matricula) throws OperationNotSupportedException {
@@ -121,22 +124,26 @@ public class Matricula {
     }
 
     // Devuelve la lista de asignaturas matriculadas.
-    public Asignatura[] getColeccionAsignaturas() {
-        return this.coleccionAsignaturas;
+    public ArrayList<Asignatura> getColeccionAsignaturas() {
+        return new ArrayList<>(this.coleccionAsignaturas);
     }
 
     // Establece la lista de asignaturas matriculadas.
-    public void setColeccionAsignaturas(Asignatura[] coleccionAsignaturas) throws OperationNotSupportedException {
+    public void setColeccionAsignaturas(ArrayList<Asignatura> coleccionAsignaturas) throws OperationNotSupportedException {
         Objects.requireNonNull(coleccionAsignaturas, "ERROR: La lista de asignaturas de una matrícula no puede ser nula.");
         if (superaMaximoNumeroHorasMatricula(coleccionAsignaturas)) {
             throw new OperationNotSupportedException("ERROR: No se puede realizar la matrícula ya que supera el máximo de horas permitidas ("
                     + Matricula.MAXIMO_NUMERO_HORAS_MATRICULA + " horas).");
         }
-        this.coleccionAsignaturas = coleccionAsignaturas;
+        this.coleccionAsignaturas = new ArrayList<>();
+        for (Asignatura a : coleccionAsignaturas) {
+            if (a == null) continue;
+            this.coleccionAsignaturas.add(new Asignatura(a));
+        }
     }
 
     // Calcula si la suma de horas de las asignaturas supera el máximo permitido.
-    private boolean superaMaximoNumeroHorasMatricula(Asignatura[] asignaturasMatricula) {
+    private boolean superaMaximoNumeroHorasMatricula(ArrayList<Asignatura> asignaturasMatricula) {
         int horasMatricula = 0;
         for (Asignatura a : asignaturasMatricula) {
             if (a != null) {
@@ -149,10 +156,10 @@ public class Matricula {
     // Devuelve una representación textual de las asignaturas matriculadas.
     private String asignaturasMatricula() {
         String s = "";
-        for (int i = 0; i < coleccionAsignaturas.length; i++) {
-            if (coleccionAsignaturas[i] != null) {
-                s += coleccionAsignaturas[i].getNombre();
-                if (i < coleccionAsignaturas.length - 1) {
+        for (int i = 0; i < coleccionAsignaturas.size(); i++) {
+            if (coleccionAsignaturas.get(i) != null) {
+                s += coleccionAsignaturas.get(i).getNombre();
+                if (i < coleccionAsignaturas.size() - 1) {
                     s += ", ";
                 }
             }
@@ -171,7 +178,7 @@ public class Matricula {
 
     @Override
     public int hashCode() {
-        return Objects.hash(idMatricula, cursoAcademico, fechaMatriculacion, fechaAnulacion, alumno, Arrays.hashCode(coleccionAsignaturas));
+        return Objects.hash(idMatricula, cursoAcademico, fechaMatriculacion, fechaAnulacion, alumno, coleccionAsignaturas);
     }
 
     // Muestra la información de la matrícula.

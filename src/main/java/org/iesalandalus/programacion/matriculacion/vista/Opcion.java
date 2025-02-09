@@ -30,11 +30,6 @@ public enum Opcion {
         this.cadenaAMostrar = cadenaAMostrar;
     }
 
-    // Metodo para obtener el mensaje.
-    public String getMensaje() {
-        return cadenaAMostrar;
-    }
-
     // Devuelve la representación en cadena de la opción, que incluye su índice en la enumeración
     @Override
     public String toString() {

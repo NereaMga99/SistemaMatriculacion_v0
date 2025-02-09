@@ -12,16 +12,11 @@ import javax.naming.OperationNotSupportedException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Consola {
     private Consola() {}
-
-    // Constructor.
-    public static final CiclosFormativos ciclosFormativos = new CiclosFormativos(5);
-    public static final Asignaturas asignaturas = new Asignaturas(5);
-    public static final Alumnos alumnos = new Alumnos(5);
-    public static final Matriculas matriculas = new Matriculas(5);
 
     // Muestra el menú de opciones en la consola.
     public static void mostrarMenu() {
@@ -45,76 +40,117 @@ public class Consola {
 
     // Metodo leer alumno donde nos pedirá todos los datos del alumno.
     public static Alumno leerAlumno() {
-        System.out.print("Nombre completo del alumno: ");
-        String nombre = Entrada.cadena();
-        System.out.print("DNI del alumno: ");
-        String dni = Entrada.cadena();
-        System.out.print("Correo del alumno: ");
-        String correo = Entrada.cadena();
-        System.out.print("Teléfono del alumno: ");
-        String telefono = Entrada.cadena();
-        LocalDate fechaNacimiento = leerFecha("Fecha de nacimiento (dd/MM/yyyy): ");
+        String nombre;
+        String telefono;
+        String correo;
+        String dni;
+        LocalDate fechaNacimiento;
+
+        System.out.println("Introduce los datos del alumno: ");
+        do {
+            System.out.println("\nIntroduce el nombre del alumno: ");
+            nombre = Entrada.cadena();
+        } while (nombre.isBlank());
+
+        do {
+            System.out.println("\nIntroduce el telefono del alumno: ");
+            telefono = Entrada.cadena();
+        } while (telefono.isBlank());
+
+        do {
+            System.out.println("\nIntroduce el correo del alumno: ");
+            correo = Entrada.cadena();
+        } while (correo.isBlank());
+
+        do {
+            System.out.println("\nIntroduce el DNI del alumno: ");
+            dni = Entrada.cadena();
+        } while (dni.isBlank());
+
+        do {
+            String mensaje = "Introduce la fecha de nacimiento del alumno:";
+            fechaNacimiento = leerFecha(mensaje);
+        } while (fechaNacimiento == null);
+
         return new Alumno(nombre, dni, correo, telefono, fechaNacimiento);
+
     }
 
     // Metodo get para encontrar a un alumno por su dni.
     public static Alumno getAlumnoPorDni() {
-        System.out.print("DNI del alumno: ");
-        String dni = Entrada.cadena();
-        try {
-            return new Alumno("Alumno Ficticio", dni, "ficticio@gmail.com", "600123456", LocalDate.of(2000, 1, 1));
-        } catch (IllegalArgumentException e) {
-            System.out.println("ERROR: No se pudo crear el alumno. " + e.getMessage());
-            return null;
-        }
+        String nombre = "ficticio";
+        String telefono = "111111111";
+        String correo = "ficticio@inventado.es";
+        String dni = "12345678Z";
+        LocalDate fechaNacimiento = LocalDate.of(1991, 12, 12);
+
+        do {
+            System.out.println("\nIntroduce el DNI del alumno: ");
+            dni = Entrada.cadena();
+        } while (dni.isBlank());
+
+        return new Alumno(nombre, dni, correo, telefono, fechaNacimiento);
     }
 
     // Metodo para leer una fecha.
     public static LocalDate leerFecha(String mensaje) {
-        LocalDate fecha = null;
-        boolean fechaValida = false;
-        while (!fechaValida) {
+        do {
             try {
-                System.out.print(mensaje);
-                String fechaTexto = Entrada.cadena();
-                fecha = LocalDate.parse(fechaTexto, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                fechaValida = true;
+                System.out.printf(mensaje, Alumno.FORMATO_FECHA);
+                LocalDate fecha = LocalDate.parse(Entrada.cadena(), DateTimeFormatter.ofPattern(Alumno.FORMATO_FECHA));
+                return fecha;
             } catch (DateTimeParseException e) {
-                System.out.println("Formato de fecha no válido. Intenta nuevamente.");
+                System.out.println("ERROR: El formato de la fecha no es correcto.");
             }
-        }
-        return fecha;
+        } while (true);
     }
 
     // Metodo para leer los grados.
     public static Grado leerGrado() {
-        System.out.println("Grados que tiene disponibles:");
-        for (Grado grado : Grado.values()) {
-            System.out.println(grado.ordinal() + " .- " + grado);
-        }
-        System.out.print("Introduce el número del grado interesado: ");
-        int opcion = Entrada.entero();
-        if (opcion < 0 || opcion >= Grado.values().length) {
-            throw new IllegalArgumentException("ERROR: Opción no válida.");
-        }
-        return Grado.values()[opcion];
+        int seleccion;
+        do {
+            System.out.println("\nIntroduce el codigo del grado: ");
+            for (Grado grado : Grado.values()) {
+                System.out.println(grado.imprimir());
+            }
+            seleccion = Entrada.entero();
+        } while (seleccion < 0 || seleccion >= Grado.values().length);
+        return Grado.values()[seleccion];
     }
 
     // Metodo para leer los ciclos formativos.
     public static CicloFormativo leerCicloFormativo() {
-        System.out.print("Introduce el código del ciclo formativo: ");
-        int codigo = Entrada.entero();
+        int codigo;
+        String familiaProfesional;
+        Grado grado;
+        String nombre;
+        int horas;
+        do {
+            System.out.println("\nIntroduce el codigo del ciclo formativo: ");
+            codigo = Entrada.entero();
+        } while (codigo < 0);
 
-        System.out.print("Introduce el nombre del ciclo formativo: ");
-        String nombre = Entrada.cadena();
+        do {
+            System.out.println("\nIntroduce la familia profesional del ciclo formativo: ");
+            familiaProfesional = Entrada.cadena();
+        } while (familiaProfesional.isBlank());
 
-        Grado grado = leerGrado();
+        grado = leerGrado();
 
-        System.out.print("Introduce las horas del ciclo formativo: ");
-        int horas = Entrada.entero();
+        do {
+            System.out.println("\nIntroduce el nombre del ciclo formativo: ");
+            nombre = Entrada.cadena();
+        } while (nombre.isBlank());
 
-        System.out.print("Introduce la familia profesional: ");
-        String familiaProfesional = Entrada.cadena();
+        do {
+            System.out.println("\nIntroduce las horas del ciclo formativo: ");
+            System.out.println("El maximo numero de horas es " + CicloFormativo.MAXIMO_NUMERO_HORAS);
+            horas = Entrada.entero();
+        } while (horas < 0);
+        if (horas > CicloFormativo.MAXIMO_NUMERO_HORAS) {
+            throw new IllegalArgumentException(
+                    "ERROR: El numero de horas no puede ser mayor que " + CicloFormativo.MAXIMO_NUMERO_HORAS);
+        }
 
         return new CicloFormativo(codigo, familiaProfesional, grado, nombre, horas);
     }
@@ -135,39 +171,29 @@ public class Consola {
 
     // Metodo get para encontrar un ciclo formativo por su codigo.
     public static CicloFormativo getCicloFormativoPorCodigo() {
-        System.out.print("Introduce el código del ciclo formativo: ");
-        int codigo = Entrada.entero();
-
-        if (codigo <= 0) {
-            throw new IllegalArgumentException("ERROR: El código del ciclo formativo debe ser un número positivo.");
-        }
-
-        return new CicloFormativo(codigo, "Ficticia", Grado.GDCFGM, "Ficticio", 1000);
+        int codigo;
+        String familiaProfesional = "ficticia";
+        Grado grado = Grado.GDCFGB;
+        String nombre = "ficticio";
+        int horas = 1;
+        do {
+            System.out.println("\nIntroduce el codigo del ciclo formativo: ");
+            codigo = Entrada.entero();
+        } while (codigo < 0);
+        return new CicloFormativo(codigo, familiaProfesional, grado, nombre, horas);
     }
 
     // Metodo para leer el curso que se elija dentro de la lista de cursos existentes.
     public static Curso leerCurso() {
-        System.out.println("Cursos que hay disponibles:");
-
-        for (Curso curso : Curso.values()) {
-            System.out.println(curso);
-        }
-
-        Curso curso = null;
-        boolean opcionValida = false;
-
-        while (!opcionValida) {
-            try {
-                System.out.print("Introduce el nombre del curso: ");
-                String cursoTexto = Entrada.cadena().toUpperCase().trim();
-
-                curso = Curso.valueOf(cursoTexto);
-                opcionValida = true;
-            } catch (IllegalArgumentException e) {
-                System.out.println("Curso no válido. Inténtalo de nuevo.");
+        int seleccion;
+        do {
+            System.out.println("\nIntroduce el curso de la asignatura: ");
+            for (Curso curso : Curso.values()) {
+                System.out.println(curso.imprimir());
             }
-        }
-        return curso;
+            seleccion = Entrada.entero();
+        } while (seleccion < 0 || seleccion >= Curso.values().length);
+        return Curso.values()[seleccion];
     }
 
     // Metodo para leer la especialidad del profesorado.
@@ -196,48 +222,67 @@ public class Consola {
     }
 
     // Metodo leer asignatura donde nos pedira todos los datos de la asignatura.
-    public static Asignatura leerAsignatura(CicloFormativo ciclo) {
+    public static Asignatura leerAsignatura(CicloFormativo cicloFormativo) {
+        String codigo;
+        String nombre;
+        int horasAnuales;
+        Curso curso;
+        int horasDesdoble;
+        EspecialidadProfesorado especialidadProfesorado;
+        do {
+            System.out.println("\nIntroduce el codigo de la asignatura: ");
+            System.out.println("El codigo debe tener un formato de 4 digitos.");
+            codigo = Entrada.cadena();
+        } while (codigo.isBlank());
 
-        System.out.print("Introduce el código de la asignatura: ");
-        String codigo = Entrada.cadena();
+        do {
+            System.out.println("\nIntroduce el nombre de la asignatura: ");
+            nombre = Entrada.cadena();
+        } while (nombre.isBlank());
 
-        System.out.print("Introduce el nombre de la asignatura: ");
-        String nombre = Entrada.cadena();
+        do {
+            System.out.println("\nIntroduce las horas anuales de la asignatura: ");
+            System.out.println("El numero de horas tiene que ser entre 0 y 300.");
+            horasAnuales = Entrada.entero();
+        } while (horasAnuales < 0);
 
-        System.out.print("Introduce las horas de la asignatura: ");
-        int horas = Entrada.entero();
+        curso = leerCurso();
 
-        Curso curso = leerCurso();
+        do {
+            System.out.println("\nIntroduce las horas desdoble de la asignatura: ");
+            System.out.println("El numero de horas de desdoble tiene que ser entre 0 y 6");
+            horasDesdoble = Entrada.entero();
+        } while (horasDesdoble < 0);
 
-        System.out.print("Introduce las horas de desdoble: ");
-        int horasDesdoble = Entrada.entero();
+        especialidadProfesorado = leerEspecialidadProfesorado();
 
-        EspecialidadProfesorado especialidad = leerEspecialidadProfesorado();
 
-        return new Asignatura(codigo, nombre, horas, curso, horasDesdoble, especialidad, ciclo);
+        return new Asignatura(codigo, nombre, horasAnuales, curso, horasDesdoble, especialidadProfesorado,
+                cicloFormativo);
     }
 
     // Metodo get de asignaturas por código.
     public static Asignatura getAsignaturaPorCodigo() {
-        System.out.print("Introduce el código de la asignatura: ");
-        String codigo = Entrada.cadena();
-
-        if (codigo == null || codigo.isEmpty()) {
-            throw new IllegalArgumentException("El código de la asignatura no puede ser vacío.");
-        }
-
-        String nombre = "Asignatura Ficticia";
-        int horas = 100;
+        String codigo;
+        String nombre = "Asignaturaficticia";
+        int horasAnuales = 13;
         Curso curso = Curso.PRIMERO;
-        int horasDesdoble = 6;
-        EspecialidadProfesorado especialidad = EspecialidadProfesorado.FOL;
-        CicloFormativo ciclo = new CicloFormativo(1011, "Familia Ficticia", Grado.GDCFGM, "Ciclo Ficticio", 2000);
+        int horasDesdoble = 5;
+        EspecialidadProfesorado especialidadProfesorado = EspecialidadProfesorado.SISTEMAS;
+        CicloFormativo cicloFormativo = new CicloFormativo(9999, "ficticio", Grado.GDCFGB, "ficticio", 200);
+        Asignatura asignatura;
+        do {
+            System.out.println("\nIntroduce el codigo de la asignatura: ");
+            codigo = Entrada.cadena();
+        } while (codigo == null || codigo.isBlank());
+        asignatura = new Asignatura(codigo, nombre, horasAnuales, curso, horasDesdoble, especialidadProfesorado,
+                cicloFormativo);
 
-        return new Asignatura(codigo, nombre, horas, curso, horasDesdoble, especialidad, ciclo);
+        return new Asignatura(asignatura);
     }
 
     // Muestra en consola el listado de asignaturas disponibles.
-    public static void mostrarAsignaturas(Asignatura[] asignaturas) {
+    public static void mostrarAsignaturas(ArrayList<Asignatura> asignaturas) {
         System.out.println("Listado de Asignaturas disponibles:");
         for (Asignatura asignatura : asignaturas) {
             if (asignatura != null) {
@@ -247,26 +292,22 @@ public class Consola {
     }
 
     // Permite al usuario elegir asignaturas para su matrícula y las retorna en un arreglo.
-    public static Asignatura[] elegirAsignaturasMatricula(Asignatura[] asignaturas)
+    public static ArrayList<Asignatura> elegirAsignaturasMatricula(ArrayList<Asignatura> asignaturas)
             throws OperationNotSupportedException {
-
-        if (asignaturas == null || asignaturas.length == 0) {
+        if (asignaturas == null || asignaturas.size() == 0) {
             throw new IllegalArgumentException("ERROR: No hay asignaturas disponibles para seleccionar.");
         }
 
-        Asignatura[] asignaturasMatricula = new Asignatura[asignaturas.length];
-        int asignaturasSeleccionadas = 0; // Número de asignaturas añadidas al array
+        ArrayList<Asignatura> asignaturasMatricula = new ArrayList<>();
         int opcion = 0;
 
         do {
-            mostrarAsignaturas(asignaturas); // Muestra las asignaturas disponibles
+            mostrarAsignaturas(asignaturas);
 
-            // Obtener la asignatura por código
             System.out.print("Introduzca el código de la asignatura: ");
             String codigo = Entrada.cadena();
             Asignatura asignatura = null;
 
-            // Validar si el código corresponde a una asignatura válida
             for (Asignatura a : asignaturas) {
                 if (a != null && a.getCodigo().equals(codigo)) {
                     asignatura = a;
@@ -276,45 +317,44 @@ public class Consola {
 
             if (asignatura == null) {
                 System.out.println("ERROR: La asignatura seleccionada no es válida.");
-                continue; // Volver a solicitar la asignatura
+                continue;
             }
 
-            // Verificar si ya está matriculada
             if (asignaturaYaMatriculada(asignaturasMatricula, asignatura)) {
                 System.out.println("La asignatura ya está seleccionada.");
             } else {
                 // Añadir asignatura al array
-                asignaturasMatricula[asignaturasSeleccionadas++] = asignatura;
+                asignaturasMatricula.add(asignatura);
                 System.out.println("Asignatura añadida correctamente.");
             }
 
-            // Preguntar si desea añadir otra asignatura
             System.out.print("¿Desea añadir otra asignatura? (0 = No, 1 = Sí): ");
             opcion = Entrada.entero();
-        } while (opcion == 1 && asignaturasSeleccionadas < asignaturas.length);
+        } while (opcion == 1 && asignaturasMatricula.size() < asignaturas.size());
 
-        // Crear un nuevo array con las asignaturas seleccionadas
-        return Arrays.copyOf(asignaturasMatricula, asignaturasSeleccionadas);
+        return asignaturasMatricula;
     }
 
     // Metodo para comparar si la asignatura ya esta matriculada.
-    private static boolean asignaturaYaMatriculada(Asignatura[] asignaturas, Asignatura asignatura) {
-        for (Asignatura a : asignaturas) {
-            if (a != null && a.equals(asignatura)) {
-                return true;
+    static boolean asignaturaYaMatriculada(ArrayList<Asignatura> asignaturasMatricula, Asignatura asignatura) {
+        if (asignaturasMatricula != null) {
+            for (int i = 0; i < asignaturasMatricula.size(); i++) {
+                if (asignaturasMatricula.get(i)!= null && asignaturasMatricula.get(i).equals(asignatura)) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     // Metodo leer matricula donde nos pedira todos los datos de la matricula.
-    public static Matricula leerMatricula(Alumno alumno, Asignatura[] asignaturas)
+    public static Matricula leerMatricula(Alumno alumno, ArrayList<Asignatura> asignaturas)
             throws OperationNotSupportedException {
 
         if (alumno == null) {
             throw new NullPointerException("ERROR: El alumno de una matrícula no puede ser nulo.");
         }
-        if (asignaturas == null || asignaturas.length == 0) {
+        if (asignaturas == null || asignaturas.size() == 0) {
             throw new NullPointerException("ERROR: Las asignaturas de una matrícula no pueden ser nulas.");
         }
 
@@ -341,16 +381,19 @@ public class Consola {
     }
 
     // Metodo get del identificador de la matricula.
-    public static Matricula getMatriculaPorIdentificador() {
-        System.out.print("Introduce el identificador de la matrícula: ");
-        int id = Entrada.entero();
-        try {
-            Alumno alumno = getAlumnoPorDni();
-            return new Matricula(id, "24-25", LocalDate.now(), alumno, new Asignatura[0]);
-        } catch (Exception e) {
-            System.out.println("Error al obtener la matrícula: " + e.getMessage());
-            return null;
-        }
+    public static Matricula getMatriculaPorIdentificador() throws OperationNotSupportedException {
+        int idMatricula;
+        String cursoAcademico = "24-25";
+        LocalDate fechaMatriculacion = LocalDate.now();
+        Alumno alumno = new Alumno("ficticio apellidoficticio", "12345678Z", "ficticio@ficticio.es", "444444444",
+                LocalDate.of(2000, 8, 21));
+
+        System.out.println("Introduzca el id de la Matrícula.");
+        idMatricula = Entrada.entero();
+
+        Matricula matricula = new Matricula(idMatricula, cursoAcademico, fechaMatriculacion, alumno, new Asignaturas().get());
+
+        return matricula;
     }
 }
 
