@@ -1,9 +1,6 @@
 package org.iesalandalus.programacion.matriculacion.Modelo;
 
-import org.iesalandalus.programacion.matriculacion.Modelo.dominio.Alumno;
-import org.iesalandalus.programacion.matriculacion.Modelo.dominio.Asignatura;
-import org.iesalandalus.programacion.matriculacion.Modelo.dominio.CicloFormativo;
-import org.iesalandalus.programacion.matriculacion.Modelo.dominio.Matricula;
+import org.iesalandalus.programacion.matriculacion.Modelo.dominio.*;
 import org.iesalandalus.programacion.matriculacion.Modelo.negocio.Alumnos;
 import org.iesalandalus.programacion.matriculacion.Modelo.negocio.Asignaturas;
 import org.iesalandalus.programacion.matriculacion.Modelo.negocio.CiclosFormativos;
@@ -11,11 +8,11 @@ import org.iesalandalus.programacion.matriculacion.Modelo.negocio.Matriculas;
 
 import javax.naming.OperationNotSupportedException;
 
-import static org.iesalandalus.programacion.matriculacion.MainApp.CAPACIDAD;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class Modelo {
 
-    public final int CAPACIDAD = 10;
     private Alumnos alumnos;
     private Matriculas matriculas;
     private Asignaturas asignaturas;
@@ -23,10 +20,22 @@ public class Modelo {
 
     // Inicializa las colecciones de alumnos, asignaturas, ciclos formativos y matrículas con la capacidad definida.
     public void comenzar() {
-        this.alumnos = new Alumnos(CAPACIDAD);
-        this.matriculas = new Matriculas(CAPACIDAD);
-        this.asignaturas = new Asignaturas(CAPACIDAD);
-        this.ciclosFormativos = new CiclosFormativos(CAPACIDAD);
+        this.alumnos = new Alumnos();
+        this.matriculas = new Matriculas();
+        this.asignaturas = new Asignaturas();
+        this.ciclosFormativos = new CiclosFormativos();
+      /* try {
+            Alumno a1 = new Alumno("Pepe", "12345678Z", "a@a.com", "666666666", LocalDate.of(2000, 1, 1));
+            insertar(a1);
+            CicloFormativo cf1 = new CicloFormativo(1234, "DAW", new GradoE("DAW",1,1), "Desarrollo Aplicaciones Web", 20);
+            insertar(cf1);
+            Asignatura as1 = new Asignatura("5678", "Programacion", 30, Curso.PRIMERO, 2, EspecialidadProfesorado.INFORMATICA, cf1);
+            insertar(as1);
+            Matricula m1 = new Matricula(9876, "24-25", LocalDate.now(), a1, this.asignaturas.get());
+            insertar(m1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
     }
 
     // Finaliza la aplicación mostrando un mensaje por consola.
@@ -50,8 +59,8 @@ public class Modelo {
     }
 
     // Obtiene todos los alumnos de la colección.
-    public Alumno[] getAlumnos() {
-        return this.alumnos.get();
+    public ArrayList<Alumno> getAlumnos() {
+        return alumnos.get();
     }
 
     // Inserta una asignatura en la colección de asignaturas.
@@ -70,8 +79,8 @@ public class Modelo {
     }
 
     // Obtiene todas las asignaturas de la colección.
-    public Asignatura[] getAsignaturas() {
-        return this.asignaturas.get();
+    public ArrayList<Asignatura> getAsignaturas() {
+        return asignaturas.get();
     }
 
     // Inserta un ciclo formativo en la colección de ciclos formativos.
@@ -90,8 +99,8 @@ public class Modelo {
     }
 
     // Obtiene todos los ciclos formativos de la colección.
-    public CicloFormativo[] getCiclosFormativos() {
-        return this.ciclosFormativos.get();
+    public ArrayList<CicloFormativo> getCiclosFormativos() {
+        return ciclosFormativos.get();
     }
 
     // Inserta una matrícula en la colección de matrículas.
@@ -110,22 +119,22 @@ public class Modelo {
     }
 
     // Obtiene todas las matrículas de la colección.
-    public Matricula[] getMatriculas() throws OperationNotSupportedException {
-        return this.matriculas.get();
+    public ArrayList<Matricula> getMatriculas() throws OperationNotSupportedException {
+        return matriculas.get();
     }
 
     // Obtiene todas las matrículas asociadas a un alumno.
-    public Matricula[] getMatriculas(Alumno alumno) throws OperationNotSupportedException {
-        return this.matriculas.get(alumno);
+    public ArrayList<Matricula> getMatriculas(Alumno alumno) throws OperationNotSupportedException {
+        return matriculas.get(alumno);
     }
 
     // Obtiene todas las matrículas asociadas a un ciclo formativo.
-    public Matricula[] getMatriculas(CicloFormativo cicloFormativo) throws OperationNotSupportedException {
-        return this.matriculas.get(cicloFormativo);
+    public ArrayList<Matricula> getMatriculas(CicloFormativo cicloFormativo) throws OperationNotSupportedException {
+        return matriculas.get(cicloFormativo);
     }
 
     // Obtiene todas las matrículas asociadas a un curso académico.
-    public Matricula[] getMatriculas(String cursoAcademico) throws OperationNotSupportedException {
-        return this.matriculas.get(cursoAcademico);
+    public ArrayList<Matricula> getMatriculas(String cursoAcademico) throws OperationNotSupportedException {
+        return matriculas.get(cursoAcademico);
     }
 }

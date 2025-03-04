@@ -9,6 +9,7 @@ import org.iesalandalus.programacion.matriculacion.Modelo.dominio.Matricula;
 import org.iesalandalus.programacion.matriculacion.vista.Vista;
 
 import javax.naming.OperationNotSupportedException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Controlador {
@@ -25,7 +26,7 @@ public class Controlador {
     }
 
     // Inicia la ejecución de la aplicación, iniciando tanto el modelo como la vista.
-    public static void comenzar() throws OperationNotSupportedException {
+    public static void comenzar() {
         modelo.comenzar();
         vista.comenzar();
     }
@@ -52,7 +53,7 @@ public class Controlador {
     }
 
     // Obtiene todos los alumnos registrados en el modelo.
-    public Alumno[] getAlumnos() {
+    public ArrayList<Alumno> getAlumnos() {
         return modelo.getAlumnos();
     }
 
@@ -72,7 +73,7 @@ public class Controlador {
     }
 
     // Obtiene todas las asignaturas registradas en el modelo.
-    public Asignatura[] getAsignaturas() {
+    public ArrayList<Asignatura> getAsignaturas() {
         return modelo.getAsignaturas();
     }
 
@@ -92,7 +93,7 @@ public class Controlador {
     }
 
     // Obtiene todos los ciclos formativos registrados en el modelo.
-    public CicloFormativo[] getCicloFormativos() {
+    public ArrayList<CicloFormativo> getCicloFormativos() {
         return modelo.getCiclosFormativos();
     }
 
@@ -112,22 +113,22 @@ public class Controlador {
     }
 
     // Obtiene todas las matrículas registradas en el modelo.
-    public Matricula[] getMatriculas() throws OperationNotSupportedException {
+    public ArrayList<Matricula> getMatriculas() throws OperationNotSupportedException {
         return modelo.getMatriculas();
     }
 
     // Obtiene las matrículas de un alumno específico.
-    public Matricula[] getMatriculas(Alumno alumno) throws OperationNotSupportedException {
+    public ArrayList<Matricula> getMatriculas(Alumno alumno) throws OperationNotSupportedException {
         return modelo.getMatriculas(alumno);
     }
 
     // Obtiene las matrículas de un ciclo formativo específico.
-    public Matricula[] getMatriculas(CicloFormativo cicloFormativo) throws OperationNotSupportedException {
+    public ArrayList<Matricula> getMatriculas(CicloFormativo cicloFormativo) throws OperationNotSupportedException {
         return modelo.getMatriculas(cicloFormativo);
     }
 
     // Obtiene las matrículas de un curso académico específico.
-    public Matricula[] getMatriculas(String cursoAcademico) throws OperationNotSupportedException {
+    public ArrayList<Matricula> getMatriculas(String cursoAcademico) throws OperationNotSupportedException {
         return modelo.getMatriculas(cursoAcademico);
     }
 }

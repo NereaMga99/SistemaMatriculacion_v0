@@ -26,19 +26,18 @@ public class Alumno {
 
     // Constructor con parámetros para inicializar un alumno.
     public Alumno(String nombre, String dni, String correo, String telefono, LocalDate fechaNacimiento) {
-        setNombre(nombre);
         setDni(dni);
+        setNombre(nombre);
         setCorreo(correo);
         setTelefono(telefono);
         setFechaNacimiento(fechaNacimiento);
-        setNia();
     }
 
     // Constructor copia para inicializar un alumno a partir de otro existente.
     public Alumno(Alumno alumno) {
         Objects.requireNonNull(alumno, "ERROR: No es posible copiar un alumno nulo.");
-        setNombre(alumno.getNombre());
         setDni(alumno.getDni());
+        setNombre(alumno.getNombre());
         setCorreo(alumno.getCorreo());
         setTelefono(alumno.getTelefono());
         setFechaNacimiento(alumno.getFechaNacimiento());
@@ -118,6 +117,7 @@ public class Alumno {
             throw new IllegalArgumentException("ERROR: El nombre de un alumno no puede estar vacío.");
         }
         this.nombre = formateaNombre(nombre);
+        setNia();
     }
 
     // Obtiene el DNI del alumno.
@@ -184,7 +184,7 @@ public class Alumno {
         if (o == null || getClass() != o.getClass())
             return false;
         Alumno alumno = (Alumno) o;
-        return Objects.equals(this.dni, alumno.dni) && Objects.equals(dni, alumno.dni);
+        return Objects.equals(this.dni, alumno.dni);
     }
 
     // Devuelve el código hash del objeto.
